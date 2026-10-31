@@ -1,0 +1,27 @@
+# Netlify settings. In the Netlify UI set "Base directory" to: client
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# 1) Proxy API calls to Render, so the login cookie stays first-party (works in Safari too).
+#    Replace YOUR-API with your Render service name.
+[[redirects]]
+  from = "/api/*"
+  to = "https://YOUR-API.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# 2) Single-page app: let React Router handle every other URL (its 404 page included).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'"
